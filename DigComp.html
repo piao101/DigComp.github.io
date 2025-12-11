@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DigComp 3.0 能力框架一览</title>
+    <style>
+        /* 基础样式重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, #2c3e50, #4a6491);
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2.2em;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        /* 领域卡片容器 */
+        .area-container {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        /* 单个领域卡片 */
+        .area-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-left: 5px solid #3498db;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .area-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 为不同领域设置不同的左边框颜色 */
+        .area-card:nth-child(1) { border-left-color: #e74c3c; } /* 领域1 */
+        .area-card:nth-child(2) { border-left-color: #2ecc71; } /* 领域2 */
+        .area-card:nth-child(3) { border-left-color: #f39c12; } /* 领域3 */
+        .area-card:nth-child(4) { border-left-color: #9b59b6; } /* 领域4 */
+        .area-card:nth-child(5) { border-left-color: #1abc9c; } /* 领域5 */
+
+        .area-header {
+            padding: 20px 25px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f8fafc;
+        }
+
+        .area-title {
+            font-size: 1.4em;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .area-id {
+            display: inline-block;
+            background: #34495e;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .toggle-icon {
+            font-size: 1.2em;
+            color: #7f8c8d;
+            transition: transform 0.3s ease;
+        }
+
+        .area-card.active .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .area-description {
+            padding: 0 25px 20px;
+            color: #5a6c7d;
+            font-style: italic;
+            border-bottom: 1px dashed #ecf0f1;
+            margin-bottom: 15px;
+        }
+
+        .competence-list {
+            padding: 0 25px 25px;
+            display: none;
+        }
+
+        .area-card.active .competence-list {
+            display: block;
+        }
+
+        .competence-item {
+            margin-bottom: 25px;
+            border: 1px solid #e1e8ed;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .competence-header {
+            padding: 15px 20px;
+            background-color: #f8fafc;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .competence-title {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 1.1em;
+        }
+
+        .competence-id {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 15px;
+            font-size: 0.75em;
+            margin-right: 8px;
+            font-weight: bold;
+        }
+
+        .competence-content {
+            padding: 0;
+            display: none;
+        }
+
+        .competence-item.active .competence-content {
+            display: block;
+        }
+
+        .proficiency-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+        }
+
+        .proficiency-table th {
+            background-color: #34495e;
+            color: white;
+            padding: 12px 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .proficiency-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ecf0f1;
+            vertical-align: top;
+        }
+
+        .proficiency-table tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        .proficiency-table tr:hover {
+            background-color: #edf2f7;
+        }
+
+        .level-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .level-basic { background-color: #d4edda; color: #155724; }
+        .level-intermediate { background-color: #cce7ff; color: #004085; }
+        .level-advanced { background-color: #fff3cd; color: #856404; }
+        .level-highly-advanced { background-color: #f8d7da; color: #721c24; }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 20px;
+            color: #7f8c8d;
+            font-size: 0.9em;
+            border-top: 1px solid #ecf0f1;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+
+            .area-header, .competence-header {
+                padding: 15px;
+            }
+
+            .proficiency-table {
+                font-size: 0.85em;
+            }
+
+            .proficiency-table th,
+            .proficiency-table td {
+                padding: 8px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>DigComp 3.0 能力框架</h1>
+        <p class="subtitle">欧盟公民数字能力框架 - 5大能力领域、21项能力及4级熟练度陈述一览</p>
+    </header>
+
+    <main class="area-container">
+        <!-- 领域1 -->
+        <section class="area-card active">
+            <div class="area-header" onclick="toggleArea(this.parentNode)">
+                <h2 class="area-title"><span class="area-id">领域 1</span>信息与数据</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <p class="area-description">能够浏览、搜索和筛选数字环境中的信息、数据和数字内容。能够评估信息、数据和数字内容。能够以各种方式管理信息、数据和数字内容。</p>
+            <div class="competence-list">
+                <!-- 能力 1.1 -->
+                <div class="competence-item active">
+                    <div class="competence-header" onclick="toggleCompetence(this.parentNode)">
+                        <h3 class="competence-title"><span class="competence-id">1.1</span>浏览、搜索和过滤信息</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="competence-content">
+                        <table class="proficiency-table">
+                            <thead>
+                                <tr>
+                                    <th width="15%">熟练度级别</th>
+                                    <th width="85%">能力陈述</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="level-badge level-basic">基础</span></td>
+                                    <td>使用数字工具搜索信息，并在需要时寻求帮助。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-intermediate">中级</span></td>
+                                    <td>选择适当的数字工具和策略来搜索信息和内容。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-advanced">高级</span></td>
+                                    <td>调整和组合各种数字工具和搜索策略来搜索信息和内容。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-highly-advanced">高度高级</span></td>
+                                    <td>设计复杂的搜索策略，并使用各种数字工具和方法来满足高度复杂或专业的信息需求。</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 能力 1.2 -->
+                <div class="competence-item">
+                    <div class="competence-header" onclick="toggleCompetence(this.parentNode)">
+                        <h3 class="competence-title"><span class="competence-id">1.2</span>评估信息</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="competence-content">
+                        <table class="proficiency-table">
+                            <thead>
+                                <tr>
+                                    <th width="15%">熟练度级别</th>
+                                    <th width="85%">能力陈述</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="level-badge level-basic">基础</span></td>
+                                    <td>认识到信息和内容可能不可靠，识别其来源，并对其价值进行基本判断。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-intermediate">中级</span></td>
+                                    <td>使用一系列策略来评估数字环境中信息和内容的准确性和可信度。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-advanced">高级</span></td>
+                                    <td>批判性评估信息、内容和数据，考虑上下文和潜在偏见。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-highly-advanced">高度高级</span></td>
+                                    <td>评估高度复杂或专业的信息和内容，以支持决策制定，并指导他人进行评估。</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 能力 1.3 -->
+                <div class="competence-item">
+                    <div class="competence-header" onclick="toggleCompetence(this.parentNode)">
+                        <h3 class="competence-title"><span class="competence-id">1.3</span>管理信息、数据和数字内容</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="competence-content">
+                        <table class="proficiency-table">
+                            <thead>
+                                <tr>
+                                    <th width="15%">熟练度级别</th>
+                                    <th width="85%">能力陈述</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="level-badge level-basic">基础</span></td>
+                                    <td>在数字环境中以基本方式组织、保存和查找信息和数据。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-intermediate">中级</span></td>
+                                    <td>应用一系列方法来组织、存储和检索信息、数据和内容，并对其进行基本处理。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-advanced">高级</span></td>
+                                    <td>使用各种数字工具和方法来管理、整合和分析信息、数据和内容。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-highly-advanced">高度高级</span></td>
+                                    <td>使用高级方法管理、处理和分析复杂或大量的信息和数据，并指导他人。</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 领域 2 -->
+        <section class="area-card">
+            <div class="area-header" onclick="toggleArea(this.parentNode)">
+                <h2 class="area-title"><span class="area-id">领域 2</span>沟通与协作</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <p class="area-description">能够通过数字技术进行互动、沟通和协作，并意识到文化、代际和其他多样性。能够通过公共和私人数字服务参与社会。能够维护自己的权利并做出选择。能够管理自己的数字身份。</p>
+            <div class="competence-list">
+                <!-- 能力 2.1 -->
+                <div class="competence-item">
+                    <div class="competence-header" onclick="toggleCompetence(this.parentNode)">
+                        <h3 class="competence-title"><span class="competence-id">2.1</span>通过数字技术进行互动</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="competence-content">
+                        <table class="proficiency-table">
+                            <thead>
+                                <tr>
+                                    <th width="15%">熟练度级别</th>
+                                    <th width="85%">能力陈述</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="level-badge level-basic">基础</span></td>
+                                    <td>在数字环境中使用基本的通信工具进行互动。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-intermediate">中级</span></td>
+                                    <td>选择适当的数字通信方式以适应上下文和目的。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-advanced">高级</span></td>
+                                    <td>在各种数字环境中调整通信方式，并指导他人。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-highly-advanced">高度高级</span></td>
+                                    <td>评估和组合复杂的数字通信工具，以用于专业或高度复杂的互动。</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- 能力 2.2 -->
+                <div class="competence-item">
+                    <div class="competence-header" onclick="toggleCompetence(this.parentNode)">
+                        <h3 class="competence-title"><span class="competence-id">2.2</span>通过数字技术共享</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="competence-content">
+                        <table class="proficiency-table">
+                            <thead>
+                                <tr>
+                                    <th width="15%">熟练度级别</th>
+                                    <th width="85%">能力陈述</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="level-badge level-basic">基础</span></td>
+                                    <td>在数字环境中以基本方式共享信息和内容。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-intermediate">中级</span></td>
+                                    <td>以道德和负责任的方式共享信息和内容，并了解许可和归属。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-advanced">高级</span></td>
+                                    <td>战略性地共享信息和内容以支持目标，并指导他人进行道德共享。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-highly-advanced">高度高级</span></td>
+                                    <td>领导或贡献于复杂的信息共享计划，并倡导道德实践。</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- 能力 2.3 -->
+                <div class="competence-item">
+                    <div class="competence-header" onclick="toggleCompetence(this.parentNode)">
+                        <h3 class="competence-title"><span class="competence-id">2.3</span>通过数字技术进行公民参与</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="competence-content">
+                        <table class="proficiency-table">
+                            <thead>
+                                <tr>
+                                    <th width="15%">熟练度级别</th>
+                                    <th width="85%">能力陈述</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="level-badge level-basic">基础</span></td>
+                                    <td>识别并通过数字技术参与公民和社会议题。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-intermediate">中级</span></td>
+                                    <td>积极参与数字环境中的社会和公民议题，并了解相关权利。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-advanced">高级</span></td>
+                                    <td>利用数字技术进行公民干预和倡导，并支持他人参与。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-highly-advanced">高度高级</span></td>
+                                    <td>领导或设计数字公民倡议，以促进参与和赋能。</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- 能力 2.4 -->
+                <div class="competence-item">
+                    <div class="competence-header" onclick="toggleCompetence(this.parentNode)">
+                        <h3 class="competence-title"><span class="competence-id">2.4</span>通过数字技术协作</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="competence-content">
+                        <table class="proficiency-table">
+                            <thead>
+                                <tr>
+                                    <th width="15%">熟练度级别</th>
+                                    <th width="85%">能力陈述</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="level-badge level-basic">基础</span></td>
+                                    <td>使用基本的数字工具参与协作任务。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-intermediate">中级</span></td>
+                                    <td>使用各种数字工具有效地为协作项目做出贡献。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-advanced">高级</span></td>
+                                    <td>在数字环境中领导和促进协作，管理团队和项目。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-highly-advanced">高度高级</span></td>
+                                    <td>设计复杂的协作策略并领导跨学科或组织的团队。</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- 能力 2.5 -->
+                <div class="competence-item">
+                    <div class="competence-header" onclick="toggleCompetence(this.parentNode)">
+                        <h3 class="competence-title"><span class="competence-id">2.5</span>数字行为（网络礼仪）</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="competence-content">
+                        <table class="proficiency-table">
+                            <thead>
+                                <tr>
+                                    <th width="15%">熟练度级别</th>
+                                    <th width="85%">能力陈述</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="level-badge level-basic">基础</span></td>
+                                    <td>识别并遵守数字通信中的基本行为规范。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-intermediate">中级</span></td>
+                                    <td>在数字互动中适应沟通方式以适应背景和受众。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-advanced">高级</span></td>
+                                    <td>在复杂的数字情境中示范和推广包容、尊重的行为。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-highly-advanced">高度高级</span></td>
+                                    <td>制定或倡导数字行为准则，并解决复杂的网络礼仪问题。</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- 能力 2.6 -->
+                <div class="competence-item">
+                    <div class="competence-header" onclick="toggleCompetence(this.parentNode)">
+                        <h3 class="competence-title"><span class="competence-id">2.6</span>管理数字身份</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="competence-content">
+                        <table class="proficiency-table">
+                            <thead>
+                                <tr>
+                                    <th width="15%">熟练度级别</th>
+                                    <th width="85%">能力陈述</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="level-badge level-basic">基础</span></td>
+                                    <td>识别数字身份的基本要素，并采取简单措施管理它。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-intermediate">中级</span></td>
+                                    <td>管理自己的数字身份和声誉，并了解其影响。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-advanced">高级</span></td>
+                                    <td>为个人或专业目的策划和管理多个数字身份。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-highly-advanced">高度高级</span></td>
+                                    <td>就复杂的数字身份管理提供建议，并领导相关倡议。</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+<!-- 领域 3 -->
+        <section class="area-card">
+            <div class="area-header" onclick="toggleArea(this.parentNode)">
+                <h2 class="area-title"><span class="area-id">领域 3</span>数字内容创作</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <p class="area-description">能够创建和编辑数字内容。能够改进和整合信息与内容，并理解版权和许可的应用。能够应用计算思维。</p>
+            <div class="competence-list">
+                <!-- 能力 3.1 -->
+                <div class="competence-item">
+                    <div class="competence-header" onclick="toggleCompetence(this.parentNode)">
+                        <h3 class="competence-title"><span class="competence-id">3.1</span>开发数字内容</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="competence-content">
+                        <table class="proficiency-table">
+                            <thead>
+                                <tr>
+                                    <th width="15%">熟练度级别</th>
+                                    <th width="85%">能力陈述</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="level-badge level-basic">基础</span></td>
+                                    <td>使用数字内容创建工具的基本功能来创建和编辑简单内容。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-intermediate">中级</span></td>
+                                    <td>使用各种数字工具创建和编辑内容，并满足特定要求。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-advanced">高级</span></td>
+                                    <td>创建和编辑复杂或专业的数字内容，并指导他人。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-highly-advanced">高度高级</span></td>
+                                    <td>领导或贡献于复杂数字内容的创作，或为此开发新解决方案。</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- 能力 3.2 -->
+                <div class="competence-item">
+                    <div class="competence-header" onclick="toggleCompetence(this.parentNode)">
+                        <h3 class="competence-title"><span class="competence-id">3.2</span>整合和重新阐述数字内容</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="competence-content">
+                        <table class="proficiency-table">
+                            <thead>
+                                <tr>
+                                    <th width="15%">熟练度级别</th>
+                                    <th width="85%">能力陈述</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="level-badge level-basic">基础</span></td>
+                                    <td>对现有的数字内容进行简单的修改和改进。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-intermediate">中级</span></td>
+                                    <td>整合和重新阐述来自不同来源的数字内容以创造新的输出。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-advanced">高级</span></td>
+                                    <td>复杂地整合和转换数字内容，以创造新的价值或见解。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-highly-advanced">高度高级</span></td>
+                                    <td>领导复杂数字内容的整合和重新阐述项目，并创新方法。</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- 能力 3.3 -->
+                <div class="competence-item">
+                    <div class="competence-header" onclick="toggleCompetence(this.parentNode)">
+                        <h3 class="competence-title"><span class="competence-id">3.3</span>版权和许可</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="competence-content">
+                        <table class="proficiency-table">
+                            <thead>
+                                <tr>
+                                    <th width="15%">熟练度级别</th>
+                                    <th width="85%">能力陈述</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="level-badge level-basic">基础</span></td>
+                                    <td>识别数字内容受版权保护，并了解基本许可。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-intermediate">中级</span></td>
+                                    <td>在重用和分享数字内容时，正确应用版权和许可规则。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-advanced">高级</span></td>
+                                    <td>就复杂的版权和许可问题提供建议，并评估其影响。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-highly-advanced">高度高级</span></td>
+                                    <td>为组织或项目制定版权和许可政策。</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- 能力 3.4 -->
+                <div class="competence-item">
+                    <div class="competence-header" onclick="toggleCompetence(this.parentNode)">
+                        <h3 class="competence-title"><span class="competence-id">3.4</span>计算思维和编程</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="competence-content">
+                        <table class="proficiency-table">
+                            <thead>
+                                <tr>
+                                    <th width="15%">熟练度级别</th>
+                                    <th width="85%">能力陈述</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="level-badge level-basic">基础</span></td>
+                                    <td>识别可以通过计算机解决的简单问题，并理解基本指令。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-intermediate">中级</span></td>
+                                    <td>设计简单的算法和序列来解决问题，并理解编程概念。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-advanced">高级</span></td>
+                                    <td>开发、验证和部署计算机程序或使用人工智能系统来解决复杂问题。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-highly-advanced">高度高级</span></td>
+                                    <td>领导复杂软件或人工智能系统的开发，并指导开发过程。</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+<!-- 领域 4 -->
+        <section class="area-card">
+            <div class="area-header" onclick="toggleArea(this.parentNode)">
+                <h2 class="area-title"><span class="area-id">领域 4</span>安全、福祉和负责任使用</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <p class="area-description">能够保护设备、内容、个人数据和隐私。能够保护身心健康，并支持自己和他人的福祉。能够意识到数字技术的环境影响。</p>
+            <div class="competence-list">
+                <!-- 能力 4.1 -->
+                <div class="competence-item">
+                    <div class="competence-header" onclick="toggleCompetence(this.parentNode)">
+                        <h3 class="competence-title"><span class="competence-id">4.1</span>保护设备</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="competence-content">
+                        <table class="proficiency-table">
+                            <thead>
+                                <tr>
+                                    <th width="15%">熟练度级别</th>
+                                    <th width="85%">能力陈述</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="level-badge level-basic">基础</span></td>
+                                    <td>识别并应用基本的设备保护措施，如防病毒软件和密码。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-intermediate">中级</span></td>
+                                    <td>应用一系列策略来保护设备免受恶意软件和威胁。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-advanced">高级</span></td>
+                                    <td>主动评估和更新安全措施以应对不断变化的威胁，并帮助他人。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-highly-advanced">高度高级</span></td>
+                                    <td>领导或贡献于公民网络安全倡议，并评估新出现的威胁。</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- 能力 4.2 -->
+                <div class="competence-item">
+                    <div class="competence-header" onclick="toggleCompetence(this.parentNode)">
+                        <h3 class="competence-title"><span class="competence-id">4.2</span>保护个人数据和隐私</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="competence-content">
+                        <table class="proficiency-table">
+                            <thead>
+                                <tr>
+                                    <th width="15%">熟练度级别</th>
+                                    <th width="85%">能力陈述</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="level-badge level-basic">基础</span></td>
+                                    <td>识别个人数据，并采取基本措施保护其在数字环境中的隐私。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-intermediate">中级</span></td>
+                                    <td>管理数字环境中的隐私设置，并安全地处理个人数据。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-advanced">高级</span></td>
+                                    <td>实施复杂的策略来保护个人数据，并了解相关法规。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-highly-advanced">高度高级</span></td>
+                                    <td>就数据保护法规提供建议，并领导组织的数据保护策略。</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- 能力 4.3 -->
+                <div class="competence-item">
+                    <div class="competence-header" onclick="toggleCompetence(this.parentNode)">
+                        <h3 class="competence-title"><span class="competence-id">4.3</span>支持福祉</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="competence-content">
+                        <table class="proficiency-table">
+                            <thead>
+                                <tr>
+                                    <th width="15%">熟练度级别</th>
+                                    <th width="85%">能力陈述</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="level-badge level-basic">基础</span></td>
+                                    <td>识别数字技术对福祉的潜在风险和益处，并实施基本平衡策略。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-intermediate">中级</span></td>
+                                    <td>调整数字技术使用以支持福祉，并识别有害内容或行为。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-advanced">高级</span></td>
+                                    <td>制定策略以减轻数字技术对福祉的负面影响，并支持他人。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-highly-advanced">高度高级</span></td>
+                                    <td>领导或贡献于旨在改善数字福祉的倡议或政策。</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- 能力 4.4 -->
+                <div class="competence-item">
+                    <div class="competence-header" onclick="toggleCompetence(this.parentNode)">
+                        <h3 class="competence-title"><span class="competence-id">4.4</span>数字技术的环境影响</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="competence-content">
+                        <table class="proficiency-table">
+                            <thead>
+                                <tr>
+                                    <th width="15%">熟练度级别</th>
+                                    <th width="85%">能力陈述</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="level-badge level-basic">基础</span></td>
+                                    <td>识别数字技术使用对环境的基本影响，并实施简单的节能策略。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-intermediate">中级</span></td>
+                                    <td>描述数字技术更广泛的环境影响，并应用一系列策略来减少影响。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-advanced">高级</span></td>
+                                    <td>评估数字技术选择的环境影响，并倡导可持续实践。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-highly-advanced">高度高级</span></td>
+                                    <td>领导或贡献于数字可持续发展倡议，并评估新兴技术的影响。</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+<!-- 领域 5 -->
+        <section class="area-card">
+            <div class="area-header" onclick="toggleArea(this.parentNode)">
+                <h2 class="area-title"><span class="area-id">领域 5</span>问题识别与解决</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <p class="area-description">能够识别需求和技术问题，并选择、评估和管理数字工具以做出回应。能够创造性地使用数字技术，并识别自身的能力差距。</p>
+            <div class="competence-list">
+                <!-- 能力 5.1 -->
+                <div class="competence-item">
+                    <div class="competence-header" onclick="toggleCompetence(this.parentNode)">
+                        <h3 class="competence-title"><span class="competence-id">5.1</span>识别和解决技术问题</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="competence-content">
+                        <table class="proficiency-table">
+                            <thead>
+                                <tr>
+                                    <th width="15%">熟练度级别</th>
+                                    <th width="85%">能力陈述</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="level-badge level-basic">基础</span></td>
+                                    <td>识别常见的技术问题，并在指导下寻求解决方案。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-intermediate">中级</span></td>
+                                    <td>自主解决常见的技术问题，并使用各种故障排除策略。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-advanced">高级</span></td>
+                                    <td>解决复杂的技术问题，并帮助他人解决他们的问题。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-highly-advanced">高度高级</span></td>
+                                    <td>领导复杂技术问题的解决，并为他人开发支持资源。</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- 能力 5.2 -->
+                <div class="competence-item">
+                    <div class="competence-header" onclick="toggleCompetence(this.parentNode)">
+                        <h3 class="competence-title"><span class="competence-id">5.2</span>识别需求和技术应对</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="competence-content">
+                        <table class="proficiency-table">
+                            <thead>
+                                <tr>
+                                    <th width="15%">熟练度级别</th>
+                                    <th width="85%">能力陈述</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="level-badge level-basic">基础</span></td>
+                                    <td>在指导下识别简单的需求并选择数字工具来满足它们。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-intermediate">中级</span></td>
+                                    <td>自主评估需求，并选择、使用和调整数字工具来满足它们。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-advanced">高级</span></td>
+                                    <td>为复杂需求选择、组合和调整数字工具和技术。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-highly-advanced">高度高级</span></td>
+                                    <td>为高度复杂或专业的需求设计或定制数字解决方案。</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- 能力 5.3 -->
+                <div class="competence-item">
+                    <div class="competence-header" onclick="toggleCompetence(this.parentNode)">
+                        <h3 class="competence-title"><span class="competence-id">5.3</span>创造性地使用数字技术</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="competence-content">
+                        <table class="proficiency-table">
+                            <thead>
+                                <tr>
+                                    <th width="15%">熟练度级别</th>
+                                    <th width="85%">能力陈述</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="level-badge level-basic">基础</span></td>
+                                    <td>在指导下使用数字技术解决明确定义的问题。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-intermediate">中级</span></td>
+                                    <td>使用数字技术提出改进建议或新的问题解决方案。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-advanced">高级</span></td>
+                                    <td>使用数字技术开发创新的解决方案，并在团队中协作。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-highly-advanced">高度高级</span></td>
+                                    <td>领导使用数字技术解决高度复杂问题的项目，并指导创新过程。</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- 能力 5.4 -->
+                <div class="competence-item">
+                    <div class="competence-header" onclick="toggleCompetence(this.parentNode)">
+                        <h3 class="competence-title"><span class="competence-id">5.4</span>识别和解决数字能力需求</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="competence-content">
+                        <table class="proficiency-table">
+                            <thead>
+                                <tr>
+                                    <th width="15%">熟练度级别</th>
+                                    <th width="85%">能力陈述</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="level-badge level-basic">基础</span></td>
+                                    <td>认识到数字技能很重要，并识别改进的机会。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-intermediate">中级</span></td>
+                                    <td>准确评估自己的数字能力，并积极参与学习以解决已识别的需求。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-advanced">高级</span></td>
+                                    <td>持续评估和发展自己的数字能力，并支持他人的发展。</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="level-badge level-highly-advanced">高度高级</span></td>
+                                    <td>指导他人识别和解决他们的数字能力需求，并设计学习材料。</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        <p>资料来源：DigComp 3.0: The Digital Competence Framework for Citizens (JRC, 2025)</p>
+        <p>本页面为教学演示用途 | 最后更新: 2025年</p>
+    </footer>
+
+    <script>
+        // 切换领域卡片的展开/折叠
+        function toggleArea(areaCard) {
+            // 关闭所有其他领域
+            document.querySelectorAll('.area-card').forEach(card => {
+                if (card !== areaCard) {
+                    card.classList.remove('active');
+                }
+            });
+            
+            // 切换当前领域
+            areaCard.classList.toggle('active');
+        }
+
+        // 切换能力项的展开/折叠
+        function toggleCompetence(competenceItem) {
+            // 关闭同一领域内的其他能力项
+            const parentArea = competenceItem.closest('.competence-list');
+            if (parentArea) {
+                parentArea.querySelectorAll('.competence-item').forEach(item => {
+                    if (item !== competenceItem) {
+                        item.classList.remove('active');
+                    }
+                });
+            }
+            
+            // 切换当前能力项
+            competenceItem.classList.toggle('active');
+        }
+
+        // 页面加载后，默认展开第一个领域和第一个能力
+        document.addEventListener('DOMContentLoaded', function() {
+            const firstArea = document.querySelector('.area-card');
+            if (firstArea) {
+                firstArea.classList.add('active');
+            }
+            
+            const firstCompetence = document.querySelector('.competence-item');
+            if (firstCompetence) {
+                firstCompetence.classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html>
